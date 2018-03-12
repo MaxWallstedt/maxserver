@@ -2,7 +2,7 @@
 
 This directory contains maxserver.
 
-maxserver is small C library for easily creating a multi-threaded
+maxserver is small C library for easily creating a multi-threaded TCP
 server.
 
 If you use the default install prefix `$HOME`, add the following to
