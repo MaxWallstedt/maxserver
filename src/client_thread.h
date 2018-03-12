@@ -34,12 +34,6 @@ int client_threads_init();
 void client_threads_clear();
 
 /**
- * Returns 1 if client threads have been signalled to quit. Returns 0
- * otherwise.
- */
-int client_threads_should_quit();
-
-/**
  * Starts client thread using client socket file descriptor 'cfd' and
  * calls 'client_thread'.
  * On success, zero is returned. On error, -1 is returned, and an
