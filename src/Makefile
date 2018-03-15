@@ -30,7 +30,7 @@ lib$(TARGET).so.1.0: \
 	accept_thread.o \
 	client_thread.o
 	@echo -e "LD\t$@"
-	@$(CC) -shared -Wl,-soname,lib$(TARGET).so.1 -o $@ $^
+	@$(CC) $(CFLAGS) -shared -Wl,-soname,lib$(TARGET).so.1 -o $@ $^
 
 maxserver.o: \
 	maxserver.c \

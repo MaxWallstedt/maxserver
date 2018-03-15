@@ -16,15 +16,15 @@
 # License along with maxserver.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-TARGET = maxserver
+RM = rm -f
+CP = cp
+MKDIR = mkdir -p
+INSTALL = install
+LN = ln -sf
 PREFIX = $(HOME)
 SRCDIR = src
-
-INSTALL = install
-MKDIR = mkdir
-CP = cp
-RM = rm -f
-LN = ln -sf
+EXAMPLESDIR = examples
+TARGET = maxserver
 
 all: lib$(TARGET).so.1.0 $(TARGET).h
 
@@ -36,6 +36,34 @@ $(TARGET).h: $(SRCDIR)/$(TARGET).h
 	@echo -e "CP\t$< $@"
 	@$(CP) $< $@
 
+install: \
+	$(PREFIX)/lib/lib$(TARGET).so.1.0 \
+	$(PREFIX)/lib/lib$(TARGET).so.1 \
+	$(PREFIX)/lib/lib$(TARGET).so \
+	$(PREFIX)/include/$(TARGET).h
+
+$(PREFIX)/lib/lib$(TARGET).so.1.0: \
+	lib$(TARGET).so.1.0 | \
+	$(PREFIX)/lib
+	@echo -e "INSTALL\t$@"
+	@$(INSTALL) $< $@
+
+$(PREFIX)/lib/lib$(TARGET).so.1: \
+	$(PREFIX)/lib/lib$(TARGET).so.1.0
+	@echo -e "LN\t$@"
+	@$(LN) $< $@
+
+$(PREFIX)/lib/lib$(TARGET).so: \
+	$(PREFIX)/lib/lib$(TARGET).so.1.0
+	@echo -e "LN\t$@"
+	@$(LN) $< $@
+
+$(PREFIX)/include/$(TARGET).h: \
+	$(TARGET).h | \
+	$(PREFIX)/include
+	@echo -e "INSTALL\t$@"
+	@$(INSTALL) $< $@
+
 $(PREFIX)/lib:
 	@echo -e "MKDIR\t$@"
 	@$(MKDIR) $@
@@ -44,25 +72,15 @@ $(PREFIX)/include:
 	@echo -e "MKDIR\t$@"
 	@$(MKDIR) $@
 
-install: \
-	lib$(TARGET).so.1.0 \
-	$(TARGET).h \
-	$(PREFIX)/lib \
-	$(PREFIX)/include
-	@echo -e "INSTALL\t$(PREFIX)/lib/lib$(TARGET).so.1.0"
-	@$(INSTALL) lib$(TARGET).so.1.0 $(PREFIX)/lib/lib$(TARGET).so.1.0
-	@echo -e "LN\t$(PREFIX)/lib/lib$(TARGET).so.1"
-	@$(LN) $(PREFIX)/lib/lib$(TARGET).so.1.0 $(PREFIX)/lib/lib$(TARGET).so.1
-	@echo -e "LN\t$(PREFIX)/lib/lib$(TARGET).so"
-	@$(LN) $(PREFIX)/lib/lib$(TARGET).so.1.0 $(PREFIX)/lib/lib$(TARGET).so
-	@echo -e "INSTALL\t$(PREFIX)/include/$(TARGET).h"
-	@$(INSTALL) $(TARGET).h $(PREFIX)/include/$(TARGET).h
-
-.PHONY: $(SRCDIR)/lib$(TARGET).1.0 uninstall clean
+.PHONY: $(SRCDIR)/lib$(TARGET).1.0 examples uninstall clean distclean
 
 $(SRCDIR)/lib$(TARGET).so.1.0:
-	@echo -e "MAKE\t$(SRCDIR)"
+	@echo -e "MAKE\t$(SRCDIR)/"
 	@$(MAKE) -C $(SRCDIR)
+
+examples:
+	@echo -e "MAKE\t$(EXAMPLESDIR)/"
+	@$(MAKE) -C $(EXAMPLESDIR)
 
 uninstall:
 	@echo -e "RM\t$(PREFIX)/lib/lib$(TARGET).so.1.0"
@@ -75,9 +93,13 @@ uninstall:
 	@$(RM) $(PREFIX)/include/$(TARGET).h
 
 clean:
-	@echo -e "MAKE\t$(SRCDIR) clean"
-	@$(MAKE) -C $(SRCDIR) clean
 	@echo -e "RM\tlib$(TARGET).so.1.0"
 	@$(RM) lib$(TARGET).so.1.0
 	@echo -e "RM\t$(TARGET).h"
 	@$(RM) $(TARGET).h
+	@echo -e "MAKE\t$(SRCDIR)/ clean"
+	@$(MAKE) -C $(SRCDIR) clean
+
+distclean: clean
+	@echo -e "MAKE\t$(EXAMPLESDIR)/ clean"
+	@$(MAKE) -C $(EXAMPLESDIR) clean
